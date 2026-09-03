@@ -1,0 +1,4 @@
+interface:
+  display_name: "可持续项目目录"
+  short_description: "为开发或企划调查分析项目搭建长期可维护的文件夹结构"
+  default_prompt: "使用 $sustainable-project-structure 为这个项目设计或整理一个可持续维护的目录结构。"
