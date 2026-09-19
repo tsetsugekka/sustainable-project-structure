@@ -5,7 +5,7 @@
 **Keep development, research, and hybrid projects clear, maintainable, and reproducible as they evolve with AI-assisted work.**
 
 [![Codex Skill](https://img.shields.io/badge/Codex-Skill-111827?style=flat-square)](skills/sustainable-project-structure/SKILL.md)
-![Version](https://img.shields.io/badge/version-1.2.0-2563eb?style=flat-square)
+![Version](https://img.shields.io/badge/version-1.3.0-2563eb?style=flat-square)
 
 ![Public Safe](https://img.shields.io/badge/public--safe-no%20secrets-16a34a?style=flat-square)
 
@@ -45,7 +45,8 @@ It works for both new projects and existing repositories that have accumulated h
 - **Generated indexes** — regenerate marked README sections from paths and titles, detect stale indexes, and add concrete closeout commands to generated AGENTS / CLAUDE files.
 - **Temporary lifecycle** — keep downloads, conversions, screenshots, and AI intermediates out of permanent structure.
 - **Safe migration** — map paths before moving files, then update references, deployment manifests, and tests.
-- **Skill reproducibility** — avoid authoritative copies that depend on temporary folders, credentials, or one computer.
+- **Independent maintenance** — leave project-owned rules and self-contained checks; this external governance skill need not remain installed in the project.
+- **Development kits and progress records** — separate reusable tooling from case deliverables, and consolidate fragmented logs without changing task state or evidence.
 
 ## Recommended Layouts
 
@@ -60,7 +61,6 @@ ExampleProject/
 ├── 80_SharedRuntime/
 ├── 90_ProjectDocs/
 ├── 91_ProjectTools/
-├── 92_ProjectSkills/
 ├── 98_Archive/
 ├── 99_Temporary/
 ├── AGENTS.md
@@ -78,7 +78,6 @@ ResearchProject/
 ├── 04_Deliverables/
 ├── 80_Reference/
 ├── 90_ReusableAssets/
-├── .agents/skills/
 ├── 98_Archive/
 ├── 99_Temporary/
 ├── AGENTS.md
@@ -86,7 +85,7 @@ ResearchProject/
 └── MOVED_PATHS.md
 ```
 
-These names are starting points, not mandates. Existing projects should retain mature, understandable domain language.
+These names are starting points, not mandates. Existing projects should retain mature, understandable domain language. Shared development kits organize reusable generators, templates and guidance; consuming projects own their data, task history and deliverables. A genuine long-term project-specific workflow may warrant a skill directory, but ordinary directory/document maintenance does not.
 
 ## Installation
 
@@ -131,11 +130,18 @@ Merge duplicates, preserve valuable history, keep short-lived records out of the
 and automate index updates through the existing tools and AGENTS instructions.
 ```
 
+```text
+Organize this shared development kit and its example projects.
+Leave sustainable rules and independent checks in each project; do not install the governance skill there.
+```
+
 ## Sustainable Documentation
 
 Update the existing canonical document before creating another one. Durable guides describe current behavior; task entries hold remaining work; dated records preserve useful evidence; changelogs summarize important changes. Promote reusable lessons into durable guides while leaving batch details in history. Do not delete material solely because it is old or unlinked.
 
 Merging must preserve unique constraints, open work, and recovery information. Verify conflicts against implementation and evidence, repair relative incoming/outgoing links, and check programs that read Markdown paths or fields. Valid links alone do not demonstrate that the knowledge is current.
+
+Fragmented WBS or dashboard progress can be reduced to current conclusions, pending verification and key milestones, with useful original evidence kept in history. Documentation cleanup must preserve IDs, task states, dates and acceptance conditions.
 
 New scaffolds include a self-contained index generator and task-closeout instructions. From a generated development project root:
 
@@ -161,6 +167,8 @@ python3 skills/sustainable-project-structure/scripts/scaffold_project.py init \
   --unit 10_Service \
   --agent codex
 ```
+
+No project skill directory is created or required by default. Use `--skill-dir` only to opt into a real project-specific workflow; it does not install this governance skill. Project rules and generated checks must work without the external skill.
 
 Add `--apply` only after reviewing the preview. Even with `--allow-existing`, the helper creates missing files only and never overwrites existing ones.
 

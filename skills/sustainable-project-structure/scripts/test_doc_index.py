@@ -120,6 +120,27 @@ class ScaffoldTests(unittest.TestCase):
                 root_text = (Path(directory) / "README.md").read_text()
                 self.assertIn("01_Example/README.md", root_text)
                 self.assertNotIn("01_Example/docs/", root_text)
+                self.assertFalse((Path(directory) / "92_ProjectSkills").exists())
+                self.assertFalse((Path(directory) / ".agents/skills").exists())
+                self.assertEqual(list(Path(directory).rglob("SKILL.md")), [])
+                audit = scaffold_project.parser().parse_args(["audit", "--root", directory, "--profile", profile, "--unit", "01_Example"])
+                with contextlib.redirect_stdout(io.StringIO()):
+                    self.assertEqual(scaffold_project.audit_project(audit), 0)
+
+    def test_project_skill_directory_is_explicitly_opt_in(self):
+        with tempfile.TemporaryDirectory() as directory:
+            options = ["--root", directory, "--profile", "research", "--skill-dir", ".agents/skills"]
+            args = scaffold_project.parser().parse_args(["init", *options, "--name", "Example", "--apply"])
+            audit = scaffold_project.parser().parse_args(["audit", *options])
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(scaffold_project.init_project(args), 0)
+                self.assertEqual(scaffold_project.audit_project(audit), 0)
+            skill_root = Path(directory) / ".agents/skills"
+            self.assertTrue(skill_root.is_dir())
+            self.assertEqual(list(skill_root.iterdir()), [])
+            skill_root.rmdir()
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(scaffold_project.audit_project(audit), 1)
 
     def test_existing_project_preserves_files_and_uses_existing_tool(self):
         with tempfile.TemporaryDirectory() as directory:

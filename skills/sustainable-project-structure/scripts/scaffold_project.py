@@ -31,11 +31,6 @@ PROFILE_DIRS = {
     ],
 }
 
-DEFAULT_SKILL_DIR = {
-    "development": "92_ProjectSkills",
-    "research": ".agents/skills",
-}
-
 TRANSIENT_ROOT_NAMES = {
     "downloads",
     "generated",
@@ -84,19 +79,20 @@ def instruction_text(profile: str, roots: list[str], index_tool: str | None = No
 
 - 新内容优先归入既有职责；确需新增根目录类别时，依据当前任务授权推进，并同步 `PROJECT_STRUCTURE.md` 与相关结构检查。
 {docs_rule}- 临时文件进入 `99_Temporary/YYYYMMDD-topic/`，任务结束时正式化或删除。
-- 项目级 Skill 只能有一个权威位置，不依赖临时目录或敏感输入。
+- 目录和文档规则维护在本项目 AGENTS / CLAUDE 与治理文档；检查工具在项目内独立运行，不依赖整理时使用的通用 Skill。只有真实长期项目专属工作流才按需设置项目 Skill。
 - 旧路径不存在时才查询 `MOVED_PATHS.md`；普通新建文件不登记。
 - 文档职责与生命周期以 `PROJECT_STRUCTURE.md` 为准。
 {index_rule}"""
 
 
-def project_structure_text(name: str, profile: str, roots: list[str], units: list[str], skill_dir: str) -> str:
+def project_structure_text(name: str, profile: str, roots: list[str], units: list[str], skill_dir: str | None) -> str:
     rows = "\n".join(f"| `{item}/` | 固定分区 | 参见该目录 README |" for item in roots)
     unit_note = (
         "每个开发单元拥有源码、专属 API、测试、工具和文档；当前语义以 `docs/SPEC.md` 为准。"
         if profile == "development"
         else "按事实来源和工作流归类；多文件主题用 README 说明输入、输出、版本和限制。"
     )
+    skill_note = (f"- 仅项目专属工作流的 Skill 使用 `{skill_dir}/`；不复制通用治理 Skill。" if skill_dir else "- 未配置项目 Skill；长期维护规则与独立检查工具保存在项目内，不要求安装通用治理 Skill。")
     return f"""# {name} 项目结构
 
 项目类型：`{profile}`
@@ -109,7 +105,7 @@ def project_structure_text(name: str, profile: str, roots: list[str], units: lis
 
 {unit_note}
 
-- 项目 Skill 权威路径：`{skill_dir}/`。
+{skill_note}
 - `98_Archive/` 只保留需追溯资料，不充当回收站。
 - `99_Temporary/` 只存放有明确生命周期的中间产物。
 - 已有路径移动时更新 `MOVED_PATHS.md`；新建文件无需登记。
@@ -169,10 +165,10 @@ def dev_unit_files(unit: str) -> dict[str, str]:
 
 
 def build_files(args: argparse.Namespace, *, managed_index: bool = True) -> tuple[list[str], dict[str, str]]:
-    skill_dir = safe_relative(args.skill_dir or DEFAULT_SKILL_DIR[args.profile])
+    skill_dir = safe_relative(args.skill_dir) if args.skill_dir else None
     units = [safe_relative(item, single_root=True) for item in args.unit]
     roots = list(units) + list(PROFILE_DIRS[args.profile])
-    if skill_dir.split("/", 1)[0] not in roots:
+    if skill_dir and skill_dir.split("/", 1)[0] not in roots:
         roots.append(skill_dir.split("/", 1)[0])
     roots = list(dict.fromkeys(roots))
 
@@ -215,9 +211,9 @@ def init_project(args: argparse.Namespace) -> int:
     root = Path(args.root).expanduser().resolve()
     existing_entries = list(root.iterdir()) if root.exists() else []
     roots, files = build_files(args, managed_index=not existing_entries)
-    skill_dir = safe_relative(args.skill_dir or DEFAULT_SKILL_DIR[args.profile])
+    skill_dir = safe_relative(args.skill_dir) if args.skill_dir else None
     directories = list(roots)
-    if skill_dir not in directories:
+    if skill_dir and skill_dir not in directories:
         directories.append(skill_dir)
     if existing_entries and not args.allow_existing:
         print("ERROR: target is not empty; inspect it first or pass --allow-existing", file=sys.stderr)
@@ -251,7 +247,7 @@ def audit_project(args: argparse.Namespace) -> int:
     if not root.is_dir():
         print(f"ERROR: project root not found: {root}", file=sys.stderr)
         return 2
-    skill_dir = safe_relative(args.skill_dir or DEFAULT_SKILL_DIR[args.profile])
+    skill_dir = safe_relative(args.skill_dir) if args.skill_dir else None
     units = [safe_relative(item, single_root=True) for item in args.unit]
     errors: list[str] = []
     warnings: list[str] = []
@@ -285,13 +281,14 @@ def audit_project(args: argparse.Namespace) -> int:
             if not (root / unit / "README.md").is_file():
                 errors.append(f"missing workflow README: {unit}/README.md")
 
-    skills_root = root / skill_dir
-    if not skills_root.is_dir():
-        errors.append(f"missing project skill directory: {skill_dir}/")
-    else:
-        for child in sorted(skills_root.iterdir()):
-            if child.is_dir() and not (child / "SKILL.md").is_file():
-                warnings.append(f"skill-like directory missing SKILL.md: {child.relative_to(root)}/")
+    if skill_dir:
+        skills_root = root / skill_dir
+        if not skills_root.is_dir():
+            errors.append(f"missing requested project skill directory: {skill_dir}/")
+        else:
+            for child in sorted(skills_root.iterdir()):
+                if child.is_dir() and not (child / "SKILL.md").is_file():
+                    warnings.append(f"skill-like directory missing SKILL.md: {child.relative_to(root)}/")
 
     for item in warnings:
         print(f"WARN: {item}")
@@ -311,7 +308,7 @@ def parser() -> argparse.ArgumentParser:
     common.add_argument("--root", required=True, help="project root")
     common.add_argument("--profile", choices=sorted(PROFILE_DIRS), required=True)
     common.add_argument("--unit", action="append", default=[], help="top-level page or workflow directory")
-    common.add_argument("--skill-dir", help="authoritative project skill path relative to root")
+    common.add_argument("--skill-dir", help="opt-in directory for an actual project-specific skill; none by default")
 
     init = subparsers.add_parser("init", parents=[common], help="preview or create a new structure")
     init.add_argument("--name", required=True, help="project display name")

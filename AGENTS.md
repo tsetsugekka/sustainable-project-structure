@@ -12,3 +12,5 @@
 - When behavior changes, align the helper contract, generated project instructions, and English/Chinese READMEs. Preserve existing-project conventions and describe only automation that actually runs.
 - Run `python3 -m unittest discover -s skills/sustainable-project-structure/scripts -p 'test_*.py'` and the available skill format validator before publishing script changes; review `git diff --check` and the complete public package for private information.
 - Keep the skill metadata version and README badges aligned. Distribution-specific metadata belongs in temporary publication bundles, not in the reusable source.
+
+- This governance skill is an external organization tool. Generated projects retain their own rules and standalone checks; project-specific skill directories are opt-in and do not install this skill.

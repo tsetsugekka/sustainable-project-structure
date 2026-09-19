@@ -5,7 +5,7 @@
 **让开发、研究和混合项目在持续迭代、AI 协作与人员交接中保持清晰、可维护、可再现。**
 
 [![Codex Skill](https://img.shields.io/badge/Codex-Skill-111827?style=flat-square)](skills/sustainable-project-structure/SKILL.md)
-![Version](https://img.shields.io/badge/version-1.2.0-2563eb?style=flat-square)
+![Version](https://img.shields.io/badge/version-1.3.0-2563eb?style=flat-square)
 ![Public Safe](https://img.shields.io/badge/public--safe-no%20secrets-16a34a?style=flat-square)
 
 **中文** · [English](README.md)
@@ -56,7 +56,8 @@
 - **自动目录维护**：从路径与标题生成 README 标记区，只读检查发现过期，生成的 AGENTS / CLAUDE 写入真实收尾命令。
 - **临时生命周期**：让下载、转换、截图和 AI 中间产物在任务完成时自然退出项目。
 - **安全迁移**：移动文件前建立映射，移动后更新引用、部署清单与测试。
-- **Skill 可再现性**：避免把唯一权威副本、凭据或本机路径留在临时环境中。
+- **项目独立维护**：长期规则写入项目 AGENTS / docs，检查工具可独立运行；不要求本通用治理 Skill 常驻项目。
+- **开发 kit 与进展记录**：分开可复用工具和案件交付物，归并碎片日志并保持任务状态及证据。
 
 ## 推荐结构示例
 
@@ -78,7 +79,6 @@ ExampleProject/
 ├── 80_SharedRuntime/
 ├── 90_ProjectDocs/
 ├── 91_ProjectTools/
-├── 92_ProjectSkills/
 ├── 98_Archive/
 ├── 99_Temporary/
 ├── AGENTS.md
@@ -96,7 +96,6 @@ ResearchProject/
 ├── 04_Deliverables/
 ├── 80_Reference/
 ├── 90_ReusableAssets/
-├── .agents/skills/
 ├── 98_Archive/
 ├── 99_Temporary/
 ├── AGENTS.md
@@ -104,7 +103,7 @@ ResearchProject/
 └── MOVED_PATHS.md
 ```
 
-这些名称是起点，不是强制标准。已有项目应保留成熟且可理解的业务分类。
+这些名称是起点，不是强制标准。已有项目应保留成熟且可理解的业务分类。共享开发 kit 维护生成器、模板与使用指南，使用方项目保存自己的数据、任务记录与交付物；真正长期项目专属工作流才考虑 Skill 目录，日常目录／文档维护不需要。
 
 ## 安装
 
@@ -149,11 +148,18 @@ cp -R sustainable-project-structure/skills/sustainable-project-structure \
 通过已有工具和 AGENTS 规则落实目录自动维护。
 ```
 
+```text
+整理这个共享开发 kit 与案例项目。
+各项目留下自己的长期规则和独立检查工具，不把通用治理 Skill 安装进去。
+```
+
 ## 可持续文档库
 
 新建前先找现有权威文档。长期指南描述现行行为，任务入口保留待办，带日期的记录承接独有证据，变更日志概括重要变化。稳定方法写回长期指南，批次细节留在历史中；不因文档旧或无人引用就删除。
 
 归并前保留独有约束、待办和恢复信息，冲突核对实现与证据。移动后修复相对入链、出链，以及读取 Markdown 路径或字段的程序。链接检查通过不等于知识已更新。
+
+WBS 或单页看板的碎片进展可归并为当前结论、待确认事项与关键节点，有价值的原始证据留在历史中；文字整理不改变任务 ID、状态、日期和验收条件。
 
 新脚手架自带可独立运行的目录生成器和任务收尾指令。在生成的开发项目根运行：
 
@@ -179,6 +185,8 @@ python3 skills/sustainable-project-structure/scripts/scaffold_project.py init \
   --unit 10_Service \
   --agent codex
 ```
+
+默认不创建、不要求项目 Skill 目录。只有实际项目专属工作流需要时才显式使用 `--skill-dir`，该选项不会安装本通用治理 Skill；项目规则和检查工具不依赖它。
 
 确认预览后再添加 `--apply`。即使使用 `--allow-existing`，脚本也只补齐缺失项，不覆盖已有文件。
 

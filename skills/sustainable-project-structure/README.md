@@ -1,8 +1,8 @@
 # Sustainable Project Structure
 
-Version 1.2.0. A Codex / Claude Code skill for maintaining project ownership, distributed documentation, and reproducible project tools. Instructions are in Chinese; the Python helpers require Python 3.10+ and the standard library. Git is required when indexing a Git repository.
+Version 1.3.0. A Codex / Claude Code skill for maintaining project ownership, distributed documentation, and reproducible project tools. Instructions are in Chinese; the Python helpers require Python 3.10+ and the standard library. Git is required when indexing a Git repository.
 
-Use [SKILL.md](SKILL.md) as the agent entry point. Existing projects retain their directory conventions and module-local docs. New projects can use the optional numbered scaffold; it is not a universal compliance standard.
+Use [SKILL.md](SKILL.md) as the agent entry point. This is an external organization tool, not a skill to install into every target project. Leave lasting rules in the project’s AGENTS / CLAUDE and docs, with self-contained maintenance tools. Existing projects retain their directory conventions and module-local docs. New projects can use the optional numbered scaffold; it is not a universal compliance standard.
 
 ## Documentation maintenance
 
@@ -13,6 +13,10 @@ Use [SKILL.md](SKILL.md) as the agent entry point. Existing projects retain thei
 
 The detailed policy is [documentation-lifecycle.md](references/documentation-lifecycle.md). Project-specific rules, private paths, credentials, and logs must not be copied into a reusable skill.
 
+## Kits and progress records
+
+Shared development kits own reusable generators, templates and operating guidance; consuming projects own business data, task history and deliverables. Keep optional examples separate from required dependencies. Summarize fragmented progress into current conclusions, pending verification and key milestones, retaining original evidence without changing task state or dates. Moving a directory also requires checking outside callers, links and inherited project instructions.
+
 ## Helpers
 
 Preview a new project, then add `--apply` to create it:
@@ -21,7 +25,7 @@ Preview a new project, then add `--apply` to create it:
 python3 scripts/scaffold_project.py init --root /path/to/project --name ExampleProject --profile development --unit 01_Catalog --agent codex
 ```
 
-Use `--profile research` for a research template. `--allow-existing` creates missing baseline files without overwriting existing ones; it does not inject a new index tool or markers into a nonempty project. Prefer the project's existing tooling there.
+Use `--profile research` for a research template. No project skill directory is created or required by default. `--skill-dir` opts into a directory for a real project-specific workflow; it never installs this governance skill. `--allow-existing` creates missing baseline files without overwriting existing ones; it does not inject a new index tool or markers into a nonempty project. Prefer the project's existing tooling there.
 
 New development templates include `91_ProjectTools/doc_index.py`; research templates include `90_ReusableAssets/tools/doc_index.py`. From the generated project root:
 
